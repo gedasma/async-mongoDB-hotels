@@ -2,14 +2,15 @@ const express = require('express')
 const router = express.Router()
 const hotelController = require('./../controllers/hotelController')
 
-
- 
+router
+.route('/top-5-best')
+.get(hotelController.aliasTopHotels, hotelController.getAllHotels) 
 router.param('id', hotelController.checkID)
 
 router
 .route('/')
 .get(hotelController.getAllHotels)
-.post(hotelController.createHotel)
+.post(hotelController.checkBody, hotelController.createHotel)
 router
 .route('/:id')
 .get(hotelController.getHotel)

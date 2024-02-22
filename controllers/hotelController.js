@@ -1,15 +1,34 @@
 const fs = require('fs')
 const Hotel = require('./../models/hotelModel')
+const APIFeatures = require('./../utils/apiTools')
 
-//Hotels data
- 
-const hotels = JSON.parse(fs.readFileSync(`${__dirname}/../data/hotels.json`));
+exports.checkBody = (req, res, next) =>{
+    if(!req.body.name || !req.body.room_price){
+        return res.status(400).json({
+            status:'failed',
+            message:'Missing name or price'
+        })
+    }
 
-//Callbacks
+    next()
+}
+
+exports.aliasTopHotels = (req,res,next) =>{
+    req.query.limit = '5'
+    req.query.sort = '-comfort, room_price'
+    req.query.fields = 'name, room_price, comfort'
+    next()
+}
 
 exports.getAllHotels = async (req,res)=>{
     try{
-        const hotels = await Hotel.find()
+        const hotelsData = new APIFeatures(Hotel.find(), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate()
+
+        const hotels = await hotelsData.query
         res
         .status(200)
         .json({
@@ -22,7 +41,7 @@ exports.getAllHotels = async (req,res)=>{
     }catch(err){
         res.status(404).json({
             status: 'failed',
-            message: err
+            message: err.message
         })
     }
     
