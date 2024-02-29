@@ -68,6 +68,7 @@ exports.createHotel = async (req, res)=>{
 exports.getHotel = async (req,res)=>{
     try{
         const hotel = await Hotel.findById(req.params.id)
+        console.log(req.params.id)
         res
     .status(200)
     .json({
@@ -131,18 +132,18 @@ exports.deleteHotel = async (req,res)=>{
     
 };
 
-exports.checkID = (req, res, next) => {
-    const hotel = hotels.find((hotel) => hotel.id == req.params.id);
-    if (req.params.id > hotels.length)
-    {
-        res.status(404).json({
-            status: 'failure',
-            message: 'invalid ID',
-        })
+// exports.checkID = (req, res, next) => {
+//     const hotel = hotels.find((hotel) => hotel.id == req.params.id);
+//     if (req.params.id > hotels.length)
+//     {
+//         res.status(404).json({
+//             status: 'failure',
+//             message: 'invalid ID',
+//         })
  
-        return
-    }
+//         return
+//     }
  
-    req.hotel = hotel
-    next()
-}
+//     req.hotel = hotel
+//     next()
+// }
