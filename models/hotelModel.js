@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+const User = require('./../models/userModel')
 
-const hotelShema = new mongoose.Schema({
+const hotelSchema = new mongoose.Schema({
     name:{
         type:String,
         required: [true, 'Hotel must have a name'],
@@ -43,13 +44,37 @@ const hotelShema = new mongoose.Schema({
         type:String,
         required:[true, 'A hotel must have an image cover']
     },
+    //child ref
+    managers:[
+        {
+            type:mongoose.Schema.ObjectId,
+            ref:'User'
+        }
+    ],
     createdAt:{
         type:Date,
         default:Date.now(),
         select:false 
     }
+},
+{
+    toJSON: {virtuals:true},
+    toObject: {virtuals: true}
+}
+)
+
+// hotelSchema.pre('save', async function(){
+//     const managersPromises = this.managers.map(async id => User.findById(id))
+//     this.managers = await Promise.all(managersPromises)
+// })
+
+hotelSchema.virtual('reviews', {
+    ref:'Review',
+    foreignField:'hotel',
+    localField:'_id'
 })
 
-const Hotel = mongoose.model('Hotel', hotelShema)
+
+const Hotel = mongoose.model('Hotel', hotelSchema)
 
 module.exports = Hotel;

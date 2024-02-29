@@ -67,7 +67,10 @@ exports.createHotel = async (req, res)=>{
  
 exports.getHotel = async (req,res)=>{
     try{
-        const hotel = await Hotel.findById(req.params.id)
+        const hotel = await Hotel.findById(req.params.id).populate({
+            path: 'managers',
+            select: '-__v'
+        }).populate('reviews')
         console.log(req.params.id)
         res
     .status(200)
